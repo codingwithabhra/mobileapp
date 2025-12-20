@@ -22,15 +22,6 @@ const Header = () => {
           </button>
           <div className="collapse navbar-collapse d-flex align-items-center" id="navbarSupportedContent">
 
-            {/* HOME */}
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" href="#">
-                  Home
-                </Link>
-              </li>
-            </ul>
-
             {/* SEARCH */}
             <form className="d-flex mx-auto">
               <input
@@ -47,8 +38,8 @@ const Header = () => {
             {/* LOGIN/CART */}
             <div className="rightPart ms-auto d-flex align-items-center gap-4">
                 <button className="btn btn-danger">Login</button>
-                <i className="fa-solid fa-heart" style={{"color": "#fff"}}></i>
-                <i className="fa-solid fa-cart-shopping" style={{"color": "#fff"}}></i>
+                <Link to={"/products/wishlist"}><i className="fa-solid fa-heart" style={{"color": "#fff"}}></i></Link>
+                <Link><i className="fa-solid fa-cart-shopping" style={{"color": "#fff"}}></i></Link>
             </div>
           </div>
         </div>

@@ -43,7 +43,9 @@ const ProductDetails = () => {
                   alt="..."
                 />
                 <div className="d-flex flex-column gap-2 mt-3">
-                  <button className="btn btn-primary w-100">Buy Now</button>
+                  <button className="btn btn-primary w-100">
+                    Add to wishlist
+                  </button>
                   <button className="btn btn-outline-primary w-100">
                     Add to cart
                   </button>

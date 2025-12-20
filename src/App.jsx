@@ -19,9 +19,6 @@ function App() {
   const newArrivedProducts = data?.filter((event) => event.newArrival == true);
   // console.log(newArrivedProducts);
 
-  const otherProducts = data?.filter((event) => event.newArrival !== true);
-  // console.log(otherProducts);
-
   return (
     <>
       <header>
@@ -83,9 +80,10 @@ function App() {
         <div className="category mt-5 mb-5">
           <div className="container">
             <div className="row g-4 justify-content-center align-items-center">
+
               {/* APPLE CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/product/productlist"}>
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Apple"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -106,7 +104,7 @@ function App() {
 
               {/* REALME CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Realme"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -127,7 +125,7 @@ function App() {
 
               {/* SAMSUNG CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Samsung"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -148,7 +146,7 @@ function App() {
 
               {/* MOTOROLLA CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Motorola"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -169,7 +167,7 @@ function App() {
 
               {/* PIXEL CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Google"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -190,7 +188,7 @@ function App() {
 
               {/* VIVO CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Vivo"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -211,7 +209,7 @@ function App() {
 
               {/* OPPO CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none">
+                <Link className="subCategory text-decoration-none" to={"/products/brand/Oppo"}>
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
@@ -232,61 +230,6 @@ function App() {
             </div>
           </div>
         </div>
-
-        {/* OTHER PRODUCTS
-        <h2 className="text-center mt-5 fw-bold">Other Products</h2>
-
-        <div className="container mt-5 mb-5">
-          <div className="row">
-            {otherProducts?.map((product)=> (
-              <div
-                key={product.id}
-                className="col-lg-4 col-md-6 col-sm-12 mb-3"
-              >
-                <Link style={{ textDecoration: "none" }} to={`/products/${product._id}`}>
-                  <div
-                    className="card h-100 gradient-bg shadow"
-                    style={{ backgroundColor: "#B8F1FF", border: "none", color: "#fff" }}
-                  >
-                    <div className="row g-0">
-                      <div className="col-5 d-flex justify-content-center align-items-center">
-                        <img
-                          src={product.imageUrl}
-                          className="img-fluid rounded"
-                          alt={product.smallHeader}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      </div>
-                      <div className="col-7">
-                        <div className="card-body">
-                          <h5 className="card-title fw-bold fs-5">
-                            {product.smallHeader}
-                          </h5>
-                          <p className="card-text fw-bold fs-4">
-                            ₹{product.discountedPrice}{" "}
-                            <span className="fw-normal fs-6 text-decoration-line-through">
-                              ₹{product.originalPrice}
-                            </span>
-                          </p>
-                          <p className="card-text fs-6" style={{marginBottom: "5px", paddingLeft: "15px", textIndent: "-10PX"}}>
-                          • {product.display}
-                        </p>
-                        <p className="card-text fs-6" style={{marginBottom: "5px", paddingLeft: "15px", textIndent: "-10PX"}}>
-                            • {product.backCam}
-                        </p>
-                        
-                        <p className="card-text fs-6" style={{marginBottom: "5px", paddingLeft: "15px", textIndent: "-10PX"}}>
-                            • {product.battery}
-                        </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </main>
 
       <footer>

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import StarRating from "../components/StarRating";
+import { Link } from "react-router-dom";
 
 const ProductDetails = () => {
   const { data, loading, error } = useFetch(
@@ -26,6 +27,31 @@ const ProductDetails = () => {
       (100 / findProduct.originalPrice)
   );
 
+  // for wishlist management ----------------------------------------------------
+  const addToWishlist = async (productId) => {
+    try {
+      const response = await fetch("http://localhost:3000/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      });
+
+      if (!response.ok) {
+        throw "Failed to add product";
+      }
+
+      const data = await response.json();
+      console.log("Product added successfully", data);
+      alert("Added to wishlist ❤️");
+
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    }
+  };
+
   return (
     <>
       <header>
@@ -43,12 +69,14 @@ const ProductDetails = () => {
                   alt="..."
                 />
                 <div className="d-flex flex-column gap-2 mt-3">
-                  <button className="btn btn-primary w-100">
+                  <button className="btn btn-primary w-100" onClick={()=> addToWishlist(findProduct._id)}>
                     Add to wishlist
                   </button>
-                  <button className="btn btn-outline-primary w-100">
-                    Add to cart
-                  </button>
+                  <Link to={"/wishlist"}>
+                    <button className="btn btn-outline-primary w-100">
+                      Add to cart
+                    </button>
+                  </Link>
                 </div>
               </div>
               <div className="col-md-8">

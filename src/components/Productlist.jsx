@@ -10,34 +10,35 @@ const Productlist = () => {
   const { data, loading, error } = useFetch(
     "https://smartphone-app.vercel.app/products"
   );
-  const brandName  = useParams();
+  const brandName = useParams();
   console.log(brandName);
-  
 
   if (loading) return <p>Loading product list ...</p>;
   if (error) return <p>Error loading product list ...</p>;
 
   // Category filter first
-  const categoryProducts = data?.filter((product) => product.brand.toLowerCase() === brandName.brandName.toLowerCase());
+  const categoryProducts = data?.filter(
+    (product) =>
+      product.brand.toLowerCase() === brandName.brandName.toLowerCase()
+  );
 
   // Apply context filters
   const filteredProducts = categoryProducts?.filter((product) => {
-
     const ramMatch =
-      filter.ram.length === 0 || filter.ram.includes(product.ram);
+      filter.ram.length === 0 ||
+      product.ram.some((ramArr) => filter.ram.includes(ramArr[0]));
 
     const storageMatch =
       filter.storage.length === 0 ||
-      filter.storage.includes(product.storage);
+      product.storage.some((storageArr) =>
+        filter.storage.includes(storageArr[0])
+      );
 
     const priceMatch =
       filter.price.length === 0 ||
-      filter.price.some(
-        (p) => product.discountedPrice <= Number(p)
-      );
+      filter.price.some((p) => product.discountedPrice <= Number(p));
 
-      console.log(ramMatch, storageMatch, priceMatch);
-      
+    console.log(ramMatch, storageMatch, priceMatch);
 
     return ramMatch && storageMatch && priceMatch;
   });

@@ -39,7 +39,7 @@ const Header = () => {
             <div className="rightPart ms-auto d-flex align-items-center gap-4">
                 <button className="btn btn-danger">Login</button>
                 <Link to={"/products/wishlist"}><i className="fa-solid fa-heart" style={{"color": "#fff"}}></i></Link>
-                <Link><i className="fa-solid fa-cart-shopping" style={{"color": "#fff"}}></i></Link>
+                <Link to={"/products/cart"}><i className="fa-solid fa-cart-shopping" style={{"color": "#fff"}}></i></Link>
             </div>
           </div>
         </div>

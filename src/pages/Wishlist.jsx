@@ -9,43 +9,37 @@ const Wishlist = () => {
   const { data: wishlistData, loading: wlLoaing } = useFetch(
     "https://smartphone-wishlist-db.vercel.app/wishlist"
   );
-  console.log(wishlistData);
+  console.log("items from wishlist - ", wishlistData);
 
   const { data: products, loading: pLoading } = useFetch(
     "https://smartphone-app.vercel.app/products"
   );
-  console.log(products);
+  console.log("items from product-list - ", products);
 
   // useState to update UI
-  const [wishlistState, setWishListState] = useState([]);
+  const [wishlist, setWishList] = useState([]);
 
   useEffect(() => {
-    if (wishlistData) setWishListState(wishlistData);
+    if (wishlistData) setWishList(wishlistData);
   }, [wishlistData]);
 
   if (wlLoaing || pLoading) return <p>Loading wishlist...</p>;
   if (!wishlistData || !products) return <p>Something went wrong</p>;
 
-  const wishlistIds = wishlistData.map((item) => [item.productId, item._id]);
-  console.log(wishlistIds);
-
-  // extracting data by index and dividing the array in 2 parts
-  const productIds = wishlistIds.map((item) => item[0]);
-  console.log("product ids- ", productIds);
-  const wishlistDocIds = wishlistIds.map((item) => item[1]);
-  console.log("wishlist ids- ", wishlistDocIds);
-  
+  const wishlistMap = new Map(
+    wishlist.map((item) => [item.productId, item._id])
+  );
 
   const wishlistProducts = products.filter((product) =>
-    productIds.includes(product._id)
+    wishlistMap.has(product._id)
   );
-  console.log(wishlistProducts);
+  console.log("wishlist products - ", wishlistProducts);
 
   // REMOVE FUNCTION
   const removeFromWishlist = async (wishlistId) => {
     try {
       const response = await fetch(
-        `https://smartphone-wishlist-db.vercel.app/wishlist${wishlistId}`,
+        `https://smartphone-wishlist-db.vercel.app/wishlist/${wishlistId}`,
         {
           method: "DELETE",
         }
@@ -57,7 +51,7 @@ const Wishlist = () => {
 
       alert("Removed from wishlist ❌");
 
-      setWishListState((prev) => prev.filter((item) => item._id !== wishlistId));
+      setWishList((prev) => prev.filter((item) => item._id !== wishlistId));
     } catch (error) {
       console.error(error);
       alert("Something went wrong");
@@ -78,7 +72,7 @@ const Wishlist = () => {
 
           <div className="row">
             {wishlistProducts.map((product) => {
-              const wishlistId = wishlistDocIds.find(product._id);
+              const wishlistId = wishlistMap.get(product._id);
 
               return (
                 <div key={product._id} className="col-4 mb-3">

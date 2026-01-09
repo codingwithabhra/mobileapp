@@ -26,13 +26,11 @@ const Productlist = () => {
   const filteredProducts = categoryProducts?.filter((product) => {
     const ramMatch =
       filter.ram.length === 0 ||
-      product.ram.some((ramArr) => filter.ram.includes(ramArr[0]));
+      product.ram.some((ram) => filter.ram.includes(ram));
 
     const storageMatch =
       filter.storage.length === 0 ||
-      product.storage.some((storageArr) =>
-        filter.storage.includes(storageArr[0])
-      );
+      product.storage.some((storage) => filter.storage.includes(storage));
 
     const priceMatch =
       filter.price.length === 0 ||
@@ -82,10 +80,10 @@ const Productlist = () => {
                             {product.smallHeader}
                           </h4>
                           <div className="d-flex align-items-center gap-2">
-                            <p className="card-text">{product.modelRating}</p>
-                            <p>
+                            <div className="card-text">{product.modelRating}</div>
+                            <div>
                               <StarRating rating={product.modelRating} />
-                            </p>
+                            </div>
                           </div>
                           <p className="fw-semibold">
                             {product.ratingCount} ratings &{" "}

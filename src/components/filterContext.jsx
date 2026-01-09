@@ -6,7 +6,7 @@ export const useFilterContext = () => useContext(filterContext);
 export const FilterProvider = ({ children }) => {
 
     const [ filter, setFilter ] = useState({
-        brand: [], ram: [], storage: [], price: []
+        ram: [], storage: [], price: []
     });
 
     // General handlers for all checkboxes
@@ -23,7 +23,7 @@ export const FilterProvider = ({ children }) => {
 
     const clearFilter = () => {
         setFilter({
-            brand: [], ram: [], storage: [], price: []
+            ram: [], storage: [], price: []
         })
     }
 

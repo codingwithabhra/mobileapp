@@ -26,13 +26,20 @@ const Wishlist = () => {
   if (wlLoaing || pLoading) return <p>Loading wishlist...</p>;
   if (!wishlistData || !products) return <p>Something went wrong</p>;
 
-  const wishlistMap = new Map(
-    wishlist.map((item) => [item.productId, item._id])
-  );
+  const wishlistMap = wishlist.length
+    ? new Map(wishlist.map((item) => [item.productId, item._id]))
+    : new Map();
 
-  const wishlistProducts = products.filter((product) =>
-    wishlistMap.has(product._id)
-  );
+  const wishlistProducts = wishlist.map((item) => {
+    const product = products.find((p) => p._id === item.productId);
+
+    return {
+      ...product,
+      wishlistId: item._id,
+      variant: item.variant,
+    };
+  });
+
   console.log("wishlist products - ", wishlistProducts);
 
   // REMOVE FUNCTION
@@ -85,6 +92,7 @@ const Wishlist = () => {
 
                     <h5 className="fw-regular fs-3">{product.smallHeader}</h5>
                     <p>{product.largeHeader}</p>
+                    <p className="fw-semibold">{product.variant.color} | {product.variant.ram} | {product.variant.storage}</p>
 
                     <div className="d-flex align-items-center justify-content-between">
                       <h4 className="fs-3">₹{product.discountedPrice}</h4>

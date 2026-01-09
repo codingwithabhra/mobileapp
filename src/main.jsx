@@ -7,6 +7,8 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import ProductListing from "./pages/ProductListing.jsx";
 import Wishlist from "./pages/Wishlist.jsx";
 import Cart from "./pages/Cart.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import { CartProvider } from "./components/cartContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,10 +31,16 @@ const router = createBrowserRouter([
     path: "/products/cart",
     element: <Cart />,
   },
+  {
+    path: "/products/checkout",
+    element: <Checkout />,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
   </StrictMode>
 );

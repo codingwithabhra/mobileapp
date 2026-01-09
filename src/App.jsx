@@ -80,15 +80,17 @@ function App() {
         <div className="category mt-5 mb-5">
           <div className="container">
             <div className="row g-4 justify-content-center align-items-center">
-
               {/* APPLE CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Apple"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Apple"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://images.macrumors.com/t/myq0N5iVZ0Q9DG_s0E_XejgPgdY=/1600x/article-new/2025/09/iphone-17-pro-orange.jpg"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -104,12 +106,15 @@ function App() {
 
               {/* REALME CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Realme"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Realme"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://static2.realme.net/images/realme-13-pro-plus/color/0a.jpg"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -125,12 +130,15 @@ function App() {
 
               {/* SAMSUNG CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Samsung"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Samsung"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://androidcommunity.com/wp-content/uploads/2020/09/Samsung-Smartphone-Concept-Transparent-Display.jpg"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -146,12 +154,15 @@ function App() {
 
               {/* MOTOROLLA CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Motorola"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Motorola"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://motorolanews.com/wp-content/uploads/2025/11/Moto-g_Blog-image_4.jpg"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -167,12 +178,15 @@ function App() {
 
               {/* PIXEL CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Google"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Google"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://media.wired.com/photos/68a7a913ababd253d6b1768f/4:3/w_5000,h_3750,c_limit/Google%20Pixel%2010%20Series%20SOURCE%20Julian%20Chokkattu.jpgp"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -188,12 +202,15 @@ function App() {
 
               {/* VIVO CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Vivo"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Vivo"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://i.ytimg.com/vi/nTd8t6dVmbU/maxresdefault.jpg"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>
@@ -209,12 +226,15 @@ function App() {
 
               {/* OPPO CARD */}
               <div className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
-                <Link className="subCategory text-decoration-none" to={"/products/brand/Oppo"}>
+                <Link
+                  className="subCategory text-decoration-none"
+                  to={"/products/brand/Oppo"}
+                >
                   <div className="card h-100">
                     <div style={{ height: "220px", overflow: "hidden" }}>
                       <img
                         src="https://i.cdn.newsbytesapp.com/images/l48420230710131411.png"
-                        class="card-img-top"
+                        className="card-img-top"
                         alt="..."
                       />
                     </div>

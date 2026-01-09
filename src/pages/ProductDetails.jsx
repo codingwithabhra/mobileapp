@@ -5,12 +5,19 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import StarRating from "../components/StarRating";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const ProductDetails = () => {
+  // state variable for variant selection
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedRam, setSelectedRam] = useState("");
+  const [selectedStorage, setSelectedStorage] = useState("");
+
   const { data, loading, error } = useFetch(
     "https://smartphone-app.vercel.app/products"
   );
   const productId = useParams();
+  console.log(productId);
 
   if (loading) return <p>Loading the product...</p>;
   if (error) return <p>Error loading product.</p>;
@@ -18,7 +25,7 @@ const ProductDetails = () => {
   const findProduct = data?.find(
     (product) => product._id === productId.productId
   );
-  console.log(findProduct);
+  console.log("product details -- ", findProduct);
 
   if (!findProduct) return <p>Product not found.</p>;
 
@@ -26,17 +33,36 @@ const ProductDetails = () => {
     (findProduct.originalPrice - findProduct.discountedPrice) *
       (100 / findProduct.originalPrice)
   );
+  console.log("Price after discount -- ", percentageDiscount);
 
   // for wishlist management ----------------------------------------------------
   const addToWishlist = async (productId) => {
+    if (!selectedColor || !selectedRam || !selectedStorage) {
+      alert("Please select color, RAM and storage");
+      return;
+    }
     try {
-      const response = await fetch("http://localhost:3000/wishlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId }),
-      });
+      const response = await fetch(
+        "https://smartphone-wishlist-db.vercel.app/wishlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId: findProduct._id,
+            title: findProduct.smallHeader,
+            image: findProduct.imageUrl,
+            price: findProduct.discountedPrice,
+            quantity: 1,
+            variant: {
+              color: selectedColor,
+              ram: selectedRam,
+              storage: selectedStorage,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw "Failed to add product";
@@ -45,10 +71,45 @@ const ProductDetails = () => {
       const data = await response.json();
       console.log("Product added successfully", data);
       alert("Added to wishlist ❤️");
-
     } catch (error) {
       console.log(error);
       alert("Something went wrong");
+    }
+  };
+
+  // for cart management ----------------------------------------------------
+  const addToCart = async (productId) => {
+    if (!selectedColor || !selectedRam || !selectedStorage) {
+      alert("Please select color, RAM and storage");
+      return;
+    }
+    try {
+      const response = await fetch("https://cartmodel.vercel.app/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+          variant: {
+            color: selectedColor,
+            storage: selectedStorage,
+            ram: selectedRam,
+            quantity: 1
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw "Failed to add to cart";
+      }
+
+      const data = await response.json();
+      console.log("Product added to cart", data);
+      alert("Added to cart ❤️");
+    } catch (error) {
+      console.log(error);
+      alert("Oops ! Something went wrong");
     }
   };
 
@@ -69,14 +130,18 @@ const ProductDetails = () => {
                   alt="..."
                 />
                 <div className="d-flex flex-column gap-2 mt-3">
-                  <button className="btn btn-primary w-100" onClick={()=> addToWishlist(findProduct._id)}>
+                  <button
+                    className="btn btn-primary w-100"
+                    onClick={() => addToWishlist(findProduct._id)}
+                  >
                     Add to wishlist
                   </button>
-                  <Link to={"/wishlist"}>
-                    <button className="btn btn-outline-primary w-100">
-                      Add to cart
-                    </button>
-                  </Link>
+                  <button
+                    className="btn btn-outline-primary w-100"
+                    onClick={() => addToCart(findProduct._id)}
+                  >
+                    Add to cart
+                  </button>
                 </div>
               </div>
               <div className="col-md-8">
@@ -86,13 +151,13 @@ const ProductDetails = () => {
                     <h5 className="card-title fs-2 fw-normal">
                       {findProduct.smallHeader}, {findProduct.largeHeader}
                     </h5>
-                    <div className="d-flex align-items-center gap-2">
-                      <p className="card-text">{findProduct.modelRating}</p>
-                      <p>
+                    <div className="d-flex align-items-center gap-2 mt-3">
+                      <div className="card-text">{findProduct.modelRating}</div>
+                      <div>
                         <StarRating rating={findProduct.modelRating} />
-                      </p>
+                      </div>
                     </div>
-                    <p className="fw-semibold">
+                    <p className="fw-semibold mt-3">
                       {findProduct.ratingCount} ratings &{" "}
                       {findProduct.reviewsCount} reviews
                     </p>
@@ -115,10 +180,18 @@ const ProductDetails = () => {
                   <div className="color d-flex gap-3 mb-2">
                     <h4 className="fs-5">Color :</h4>
                     <div className="d-flex flex-wrap gap-2">
-                      {findProduct.color?.map((color) => (
-                        <div key={color.index} className="fs-6">
-                          {color.join(", ")}
-                        </div>
+                      {findProduct.color.map((color) => (
+                        <button
+                          key={color}
+                          className={`btn btn-sm ${
+                            selectedColor === color
+                              ? "btn-danger"
+                              : "btn-outline-primary"
+                          }`}
+                          onClick={() => setSelectedColor(color)}
+                        >
+                          {color}
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -127,10 +200,18 @@ const ProductDetails = () => {
                   <div className="color d-flex gap-3 mb-2">
                     <h4 className="fs-5">RAM :</h4>
                     <div className="d-flex flex-wrap gap-2">
-                      {findProduct.ram?.map((ram) => (
-                        <div key={ram.index} className="fs-6">
-                          {ram.join(", ")}
-                        </div>
+                      {findProduct.ram.map((ram) => (
+                        <button
+                          key={ram}
+                          className={`btn btn-sm ${
+                            selectedRam === ram
+                              ? "btn-danger"
+                              : "btn-outline-primary"
+                          }`}
+                          onClick={() => setSelectedRam(ram)}
+                        >
+                          {ram}
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -150,10 +231,18 @@ const ProductDetails = () => {
                   <div className="color d-flex gap-3 mb-2">
                     <h4 className="fs-5">Storage :</h4>
                     <div className="d-flex flex-wrap gap-2">
-                      {findProduct.storage?.map((storage) => (
-                        <div key={storage.index} className="fs-6">
-                          {storage.join(", ")}
-                        </div>
+                      {findProduct.storage.map((storage) => (
+                        <button
+                          key={storage}
+                          className={`btn btn-sm ${
+                            selectedStorage === storage
+                              ? "btn-danger"
+                              : "btn-outline-primary"
+                          }`}
+                          onClick={() => setSelectedStorage(storage)}
+                        >
+                          {storage}
+                        </button>
                       ))}
                     </div>
                   </div>

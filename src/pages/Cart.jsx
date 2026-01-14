@@ -19,7 +19,7 @@ const Cart = () => {
     removeFromCart,
   } = useCartContext();
 
-  if (cartlist.length === 0) return <h3>Your cart is empty ❤️</h3>;
+  if (cartlist.length === 0) return <h3>Your cart is empty</h3>;
 
   console.log("Cart items -- ", cartItems);
 

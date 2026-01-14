@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useCartContext } from "../components/cartContext";
+import { useState, useEffect } from "react";
 
 const Checkout = () => {
   const {
@@ -14,13 +15,34 @@ const Checkout = () => {
     totalProductCount,
     totalSavings,
     removeFromCart,
-    cartitems,
     addresses,
     selectedAddress,
     selectedAddressId,
     addAddress,
     selectAddress,
+    placeOrder,
+    orderPlaced,
+    setOrderPlaced,
   } = useCartContext();
+
+  useEffect(() => {
+    if (orderPlaced) {
+      const timer = setTimeout(() => {
+        setOrderPlaced(false);
+        window.location.replace("/");
+      }, 2500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [orderPlaced]);
+
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    pincode: "",
+  });
 
   if (cartlist.length === 0) return <h3>Your cart is empty ❤️</h3>;
 
@@ -55,21 +77,9 @@ const Checkout = () => {
 
               {/* Delivery summary */}
               <h2>Delivery Summary</h2>
-              <div className="pt-2">
-                <div className="pt-2 d-flex justify-content-between">
-                  <p className="fs-4 fw-regular">Name :</p>
-                  <h4 className="fs-3">Abhra Patra</h4>
-                </div>
-
-                <div className="pt-2 d-flex justify-content-between">
-                  <p className="fs-4 fw-semiBold">Phone :</p>
-                  <h4 className="fs-4">9XXXXXXXXX</h4>
-                </div>
-
-                <div className="pt-2 d-flex justify-content-between">
-                  <h2>Delivery Address</h2>
-
-                  {/* {addresses.map((addr) => (
+              <div className="pt-3">
+                <div className="pt-3">
+                  {addresses.map((addr) => (
                     <div
                       key={addr.id}
                       className={`card p-3 mb-2 ${
@@ -84,24 +94,80 @@ const Checkout = () => {
                         />
                         <div>
                           <p className="fw-bold">{addr.name}</p>
-                          <p>{addr.address}</p>
+                          <p>Address - {addr.address}</p>
                           <p>
-                            {addr.phone} - {addr.pincode}
+                            Mob - {addr.phone} / Pin - {addr.pincode}
                           </p>
                         </div>
                       </label>
                     </div>
-                  ))} */}
-                </div>
+                  ))}
 
-                <div className="pt-2 d-flex justify-content-between">
-                  <p className="fs-4 fw-semiBold">Pincode :</p>
-                  <h4 className="fs-4">700001</h4>
+                  <div className="pt-2">
+                    <button
+                      className="btn btn-outline-primary mt-3"
+                      onClick={() => setShowForm(!showForm)}
+                    >
+                      + Add New Address
+                    </button>
+
+                    {showForm && (
+                      <div className="card p-3 mt-3">
+                        <input
+                          placeholder="Name"
+                          className="form-control mb-2"
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                        />
+                        <input
+                          placeholder="Phone"
+                          className="form-control mb-2"
+                          onChange={(e) =>
+                            setFormData({ ...formData, phone: e.target.value })
+                          }
+                        />
+                        <input
+                          placeholder="Address"
+                          className="form-control mb-2"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              address: e.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          placeholder="Pincode"
+                          className="form-control mb-2"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              pincode: e.target.value,
+                            })
+                          }
+                        />
+
+                        <button
+                          className="btn btn-success"
+                          onClick={() => {
+                            addAddress(formData);
+                            setShowForm(false);
+                          }}
+                        >
+                          Save Address
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="d-flex justify-content-center mt-4">
-                <button className="btn btn-warning px-5 py-2">
+                <button
+                  className="btn btn-warning px-5 py-2"
+                  onClick={placeOrder}
+                >
                   Confirm Order
                 </button>
               </div>

@@ -5,6 +5,8 @@ const cartContext = createContext();
 export const useCartContext = () => useContext(cartContext);
 
 export const CartProvider = ({ children }) => {
+  const [orderPlaced, setOrderPlaced] = useState(false);
+
   const { data: productData, loading: productLoading } = useFetch(
     "https://smartphone-app.vercel.app/products"
   );
@@ -17,6 +19,29 @@ export const CartProvider = ({ children }) => {
 
   const [cartlist, setCartList] = useState([]);
 
+  // ---------------- USER STATE (SINGLE USER FOR LOGIN)
+  const [user, setUser] = useState({
+    name: "Abhra Patra",
+    email: "abhra@example.com",
+    avatar: "https://cdn-icons-png.flaticon.com/512/219/219988.png", // placeholder
+    phone: "6541230893",
+    address: "Kolkata, India",
+    pincode: "700001",
+  });
+
+  // ---------------- ADDRESS STATE (NEW)
+  const [addresses, setAddresses] = useState([
+    {
+      id: 1,
+      name: "Abhra Patra",
+      phone: "6541230893",
+      address: "Kolkata, India",
+      pincode: "700001",
+    },
+  ]);
+
+  const [selectedAddressId, setSelectedAddressId] = useState(1);
+
   useEffect(() => {
     if (cartData) setCartList(cartData);
   }, [cartData]);
@@ -24,7 +49,9 @@ export const CartProvider = ({ children }) => {
   if (productLoading || cartLoading) return <p>Loading Cart Items...</p>;
   if (!productData || !cartData) return <p>Something went wrong</p>;
 
-  const cartMap = cartlist.length ? new Map(cartlist.map((item) => [item.productId, item._id])) : new Map();
+  const cartMap = cartlist.length
+    ? new Map(cartlist.map((item) => [item.productId, item._id]))
+    : new Map();
 
   const cartItems = cartlist.map((item) => {
     const product = productData.find((p) => p._id === item.productId);
@@ -109,28 +136,9 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ---------------- CART (already existing)
-  const [cartitems, setCartitems] = useState([]);
-
-  // ---------------- ADDRESS STATE (NEW)
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      name: "Abhra Patra",
-      phone: "9XXXXXXXXX",
-      address: "Kolkata, India",
-      pincode: "700001",
-    },
-  ]);
-
-  const [selectedAddressId, setSelectedAddressId] = useState(1);
-
   //  ADD NEW ADDRESS
   const addAddress = (newAddress) => {
-    setAddresses((prev) => [
-      ...prev,
-      { ...newAddress, id: Date.now() },
-    ]);
+    setAddresses((prev) => [...prev, { ...newAddress, id: Date.now() }]);
   };
 
   //  SELECT ADDRESS
@@ -142,6 +150,60 @@ export const CartProvider = ({ children }) => {
   const selectedAddress = addresses.find(
     (addr) => addr.id === selectedAddressId
   );
+
+  // Add order history to ORDER DB
+  const placeOrder = async (cartId) => {
+    try {
+      const response = await fetch(
+        "https://orderhistory-model.vercel.app/orderhistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            products: cartItems.map((item) => ({
+              productId: item._id,
+              productName: item.smallHeader,
+              quantity: item.variant.quantity,
+              price: item.discountedPrice,
+              variant: {
+                color: item.variant.color,
+                ram: item.variant.ram,
+                storage: item.variant.storage,
+              },
+            })),
+            totalAmount: finalCheckOutPrice,
+            selectedAddress: {
+              name: selectedAddress.name,
+              phone: selectedAddress.phone,
+              addressLine: selectedAddress.address,
+              pincode: selectedAddress.pincode,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw "Order failed";
+      }
+
+      // Clear cart DB
+      await fetch(`https://cartmodel.vercel.app/cart/${cartId}`, {
+        method: "DELETE",
+      });
+
+      // Clear frontend cart
+      setCartList([]);
+
+      const data = await response.json();
+      console.log("Order history added successfully", data);
+      alert("Order placed successfully ❤️");
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <cartContext.Provider
@@ -155,12 +217,16 @@ export const CartProvider = ({ children }) => {
         totalProductCount,
         totalSavings,
         removeFromCart,
-        cartitems,
         addresses,
         selectedAddress,
         selectedAddressId,
         addAddress,
         selectAddress,
+        placeOrder,
+        orderPlaced,
+        setOrderPlaced,
+        user,
+        setUser,
       }}
     >
       {children}

@@ -9,6 +9,7 @@ import Wishlist from "./pages/Wishlist.jsx";
 import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import { CartProvider } from "./components/cartContext.jsx";
+import Profile from "./pages/Profile.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/products/brand/:brandName",
-    element: <ProductListing />,
+    element: <ProductListing />, 
   },
   {
     path: "/products/wishlist",
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: "/products/checkout",
     element: <Checkout />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 ]);
 

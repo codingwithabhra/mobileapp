@@ -30,7 +30,7 @@ const Cart = () => {
       </header>
 
       <main style={{ backgroundColor: "#e6f0ff" }}>
-        <div className="container">
+        <div className="container py-3">
           <h2 className="pb-3 pt-3">Cart Items ({cartItems.length})</h2>
           {cartlist.length === 0 ? (
             <p>Your cart is empty ❤️</p>

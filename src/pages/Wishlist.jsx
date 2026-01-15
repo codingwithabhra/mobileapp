@@ -20,7 +20,11 @@ const Wishlist = () => {
   const [wishlist, setWishList] = useState([]);
 
   useEffect(() => {
-    if (wishlistData) setWishList(wishlistData);
+    if (Array.isArray(wishlistData)) {
+      setWishList(wishlistData);
+    } else {
+      setWishList([]);
+    }
   }, [wishlistData]);
 
   if (wlLoaing || pLoading) return <p>Loading wishlist...</p>;
@@ -92,7 +96,10 @@ const Wishlist = () => {
 
                     <h5 className="fw-regular fs-3">{product.smallHeader}</h5>
                     <p>{product.largeHeader}</p>
-                    <p className="fw-semibold">{product.variant.color} | {product.variant.ram} | {product.variant.storage}</p>
+                    <p className="fw-semibold">
+                      {product.variant.color} | {product.variant.ram} |{" "}
+                      {product.variant.storage}
+                    </p>
 
                     <div className="d-flex align-items-center justify-content-between">
                       <h4 className="fs-3">₹{product.discountedPrice}</h4>

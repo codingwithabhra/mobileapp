@@ -43,7 +43,11 @@ export const CartProvider = ({ children }) => {
   const [selectedAddressId, setSelectedAddressId] = useState(1);
 
   useEffect(() => {
-    if (cartData) setCartList(cartData);
+    if (Array.isArray(cartData)) {
+      setCartList(cartData);
+    } else {
+      setCartList([]);
+    }
   }, [cartData]);
 
   if (productLoading || cartLoading) return <p>Loading Cart Items...</p>;
@@ -52,6 +56,8 @@ export const CartProvider = ({ children }) => {
   const cartMap = cartlist.length
     ? new Map(cartlist.map((item) => [item.productId, item._id]))
     : new Map();
+
+  console.log("cart list --", cartlist);
 
   const cartItems = cartlist.map((item) => {
     const product = productData.find((p) => p._id === item.productId);

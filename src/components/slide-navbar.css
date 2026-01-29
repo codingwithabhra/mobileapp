@@ -1,0 +1,25 @@
+/* slide-navbar.css */
+
+.slide-navbar {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.slide-navbar.open {
+  max-height: 500px; /* enough for menu */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Desktop: always visible */
+@media (min-width: 992px) {
+  .slide-navbar {
+    max-height: none;
+    opacity: 1;
+    transform: none;
+    overflow: visible;
+  }
+}

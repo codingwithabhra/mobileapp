@@ -41,71 +41,70 @@ const Productlist = () => {
     return ramMatch && storageMatch && priceMatch;
   });
 
-  if (filteredProducts.length === 0) return <p>Products not found.</p>;
+  // if (filteredProducts.length === 0) return <p>Products not found.</p>;
 
   return (
     <>
-      <div style={{ backgroundColor: "#e6f0ff" }} className="h-100">
+      <div style={{ backgroundColor: "#e6f0ff", minHeight: "100vh" }}>
         <div className="container">
           <h2 className="p-4">
             Showing All Products (Total {filteredProducts.length} Products)
           </h2>
           <div className="row p-4">
+            {filteredProducts.length === 0 && <p>Products not found.</p>}
+
+
             {filteredProducts?.map((product) => (
-              <div key={product.id} className="">
+              <div key={product.id} className="mb-4">
                 <Link
-                  style={{ textDecoration: "none" }}
+                  style={{ textDecoration: "none", color: "inherit" }}
                   to={`/products/productdetails/${product._id}`}
                 >
-                  <div className="card" style={{ border: "none" }}>
-                    <div className="row g-0">
+                  <div className="card shadow-sm border-0 p-3">
+                    <div className="row align-items-center">
                       {/* IMAGE CARD */}
-                      <div className="col-4 d-flex justify-content-center align-items-center">
+                      <div className="col-12 col-md-4 text-center mb-3 mb-md-0">
                         <img
                           src={product.imageUrl}
                           className="img-fluid rounded"
                           alt={product.smallHeader}
-                          style={{
-                            height: "90%",
-                            display: "block",
-                            margin: "auto auto",
-                          }}
+                          style={{ maxHeight: "180px", objectFit: "contain" }}
                         />
                       </div>
 
                       {/* DETAILS CARD */}
-                      <div className="col-4 p-2">
+                      <div className="col-12 col-md-5">
                         <div className="card-body">
-                          <h4 className="card-title fw-bold fs-4">
+                          <h5 className="card-title fw-bold fs-4 mb-1">
                             {product.smallHeader}
-                          </h4>
-                          <div className="d-flex align-items-center gap-2">
+                          </h5>
+                          <div className="d-flex align-items-center gap-2 mb-1">
                             <div className="card-text">{product.modelRating}</div>
                             <div>
                               <StarRating rating={product.modelRating} />
                             </div>
                           </div>
-                          <p className="fw-semibold">
+                          <p className="text-muted small mb-2">
                             {product.ratingCount} ratings &{" "}
                             {product.reviewsCount} reviews
                           </p>
-                          <div className="features pt-3 fw-regular fs-6">
-                            <p className="mb-1">{product.display}</p>
-                            <p className="mb-1">{product.frontCam}</p>
-                            <p className="mb-1">{product.backCam}</p>
-                            <p className="mb-1">{product.battery}</p>
-                            <p className="mb-1">{product.os}</p>
-                          </div>
+                          <ul className="features list-unstyled small mb-0">
+                            <li className="mb-1">{product.display}</li>
+                            <li className="mb-1">{product.frontCam}</li>
+                            <li className="mb-1">{product.backCam}</li>
+                            <li className="mb-1">{product.battery}</li>
+                            <li className="mb-1">{product.os}</li>
+                          </ul>
                         </div>
                       </div>
 
                       {/* PRICE CARD */}
-                      <div className="col-4 p-2">
+                      <div className="col-12 col-md-3 text-md-end mt-3 mt-md-0">
                         <div className="card-body">
-                          <h4 className="card-text fw-bold fs-2">
+                          <h4 className="fw-bold mb-1">
                             ₹{product.discountedPrice}{" "}
                           </h4>
-                          <p className="fw-normal fs-6 text-decoration-line-through">
+                          <p className="text-muted text-decoration-line-through small mb-0">
                             ₹{product.originalPrice}
                           </p>
                         </div>

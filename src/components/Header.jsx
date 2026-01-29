@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useCartContext } from "./cartContext";
 import useFetch from "./useFetch";
+import { toast } from "react-toastify";
+import "./slide-navbar.css";
 
 const Header = () => {
   const { user, cartlist } = useCartContext();
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: wishlistData, loading: wlLoaing } = useFetch(
-    "https://smartphone-wishlist-db.vercel.app/wishlist"
+    "https://smartphone-wishlist-db.vercel.app/wishlist",
   );
   console.log("items from wishlist - ", wishlistData);
 
@@ -21,16 +25,16 @@ const Header = () => {
 
     try {
       const response = await fetch(
-        "https://smartphone-app.vercel.app/products"
+        "https://smartphone-app.vercel.app/products",
       );
       const products = await response.json();
 
       const matchedProduct = products.find((product) =>
-        product.smallHeader.toLowerCase().includes(searchTerm.toLowerCase())
+        product.smallHeader.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
       if (!matchedProduct) {
-        alert("❌ No product found");
+        toast.error("❌ No product found");
         return;
       }
 
@@ -38,7 +42,7 @@ const Header = () => {
       window.location.href = `/products/productdetails/${matchedProduct._id}`;
     } catch (error) {
       console.error(error);
-      alert("Something went wrong while searching");
+      toast.error("Something went wrong while searching");
     }
   };
 
@@ -55,20 +59,16 @@ const Header = () => {
           <button
             className="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
+            onClick={() => setIsOpen(!isOpen)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div
-            className="collapse navbar-collapse d-flex align-items-center"
-            id="navbarSupportedContent"
-          >
+          <div className={`navbar-collapse slide-navbar ${isOpen ? "open" : ""}`} id="navbarSupportedContent">
             {/* SEARCH */}
-            <form className="d-flex mx-auto" onSubmit={handleSearch}>
+            <form
+              className="d-flex my-3 my-lg-0 mx-lg-auto"
+              onSubmit={handleSearch}
+            >
               <input
                 className="form-control me-2"
                 type="search"
@@ -79,7 +79,7 @@ const Header = () => {
             </form>
 
             {/* LOGIN/CART */}
-            <div className="rightPart ms-auto d-flex align-items-center gap-4">
+            <div className="rightPart ms-lg-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3">
               <Link
                 className="btn d-flex align-items-center gap-2"
                 style={{ color: "#fff" }}
@@ -92,7 +92,7 @@ const Header = () => {
                   width="32"
                   height="32"
                 />
-                <span>{user.name}</span>
+                <span className="d-none d-lg-inline">{user.name}</span>
               </Link>
 
               {/* WISHLIST */}

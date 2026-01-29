@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Slider from "./components/Slider";
@@ -13,8 +15,8 @@ function App() {
   );
   console.log(data);
 
-  if (loading) return <p>Product List is loading ...</p>;
-  if (error) return <p>Error loading products</p>;
+  // if (loading) return <p>Product List is loading ...</p>;
+  // if (error) return <p>Error loading products</p>;
 
   const newArrivedProducts = data?.filter((event) => event.newArrival == true);
   // console.log(newArrivedProducts);
@@ -26,11 +28,16 @@ function App() {
       </header>
 
       <main>
+        
         <Slider />
+
+        { loading && <p>Product List is loading ...</p>}
+        { error && <p>Error loading products</p>}
         <h2 className="text-center mt-5 fw-bold">New Arrivals</h2>
 
         <div className="container mb-5">
           <div className="row">
+            
             {newArrivedProducts?.map((product) => (
               <div
                 key={product.id}

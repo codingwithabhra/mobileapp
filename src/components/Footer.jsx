@@ -8,7 +8,7 @@ const Footer = () => {
         style={{ backgroundColor: "#0171be", color: "#fff" }}
       >
         <div className="container">
-          <p className="pt-3 pb-3">&copy; 2025 All rights reserved | ABHRA PATRA</p>
+          <p className="pt-3 pb-3 mb-0">&copy; 2025 All rights reserved | ABHRA PATRA</p>
         </div>
       </div>
     </div>

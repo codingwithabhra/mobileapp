@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import useFetch from "./useFetch";
+import { toast } from "react-toastify";
 
 const cartContext = createContext();
 export const useCartContext = () => useContext(cartContext);
@@ -7,14 +8,18 @@ export const useCartContext = () => useContext(cartContext);
 export const CartProvider = ({ children }) => {
   const [orderPlaced, setOrderPlaced] = useState(false);
 
-  const { data: productData, loading: productLoading } = useFetch(
-    "https://smartphone-app.vercel.app/products"
-  );
+  const {
+    data: productData,
+    loading: productLoading,
+    error: productError,
+  } = useFetch("https://smartphone-app.vercel.app/products");
   console.log(productData);
 
-  const { data: cartData, loading: cartLoading } = useFetch(
-    "https://cartmodel.vercel.app/cart"
-  );
+  const {
+    data: cartData,
+    loading: cartLoading,
+    error: cartError,
+  } = useFetch("https://cartmodel.vercel.app/cart");
   console.log(cartData);
 
   const [cartlist, setCartList] = useState([]);
@@ -50,8 +55,9 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartData]);
 
-  if (productLoading || cartLoading) return <p>Loading Cart Items...</p>;
-  if (!productData || !cartData) return <p>Something went wrong</p>;
+  // guard logic instead of JSX
+  const isLoading = productLoading || cartLoading;
+  const isError = productError || cartError || !productData;
 
   const cartMap = cartlist.length
     ? new Map(cartlist.map((item) => [item.productId, item._id]))
@@ -59,16 +65,22 @@ export const CartProvider = ({ children }) => {
 
   console.log("cart list --", cartlist);
 
-  const cartItems = cartlist.map((item) => {
-    const product = productData.find((p) => p._id === item.productId);
+  const cartItems =
+    !isLoading && !isError
+      ? cartlist
+          .map((item) => {
+            const product = productData.find((p) => p._id === item.productId);
+            if (!product) return null;
 
-    return {
-      ...product,
-      cartId: item._id,
-      variant: item.variant,
-      quantity: item.variant.quantity,
-    };
-  });
+            return {
+              ...product,
+              cartId: item._id,
+              variant: item.variant,
+              quantity: item.variant.quantity,
+            };
+          })
+          .filter(Boolean)
+      : [];
 
   console.log("cart items - ", cartItems);
 
@@ -83,8 +95,8 @@ export const CartProvider = ({ children }) => {
                 quantity: item.variant.quantity + 1,
               },
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -99,25 +111,25 @@ export const CartProvider = ({ children }) => {
                 quantity: item.variant.quantity - 1,
               },
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const finalCheckOutPrice = cartItems.reduce(
     (count, acc) => count + acc.variant.quantity * acc.discountedPrice,
-    0
+    0,
   );
   console.log("quantity,final price -", finalCheckOutPrice);
 
   const totalProductCount = cartItems.reduce(
     (count, acc) => count + acc.variant.quantity,
-    0
+    0,
   );
 
   const totalSavings = cartItems.reduce(
     (count, acc) => count + acc.originalPrice - acc.discountedPrice,
-    0
+    0,
   );
 
   const removeFromCart = async (cartId) => {
@@ -126,19 +138,19 @@ export const CartProvider = ({ children }) => {
         `https://cartmodel.vercel.app/cart/${cartId}`,
         {
           method: "DELETE",
-        }
+        },
       );
 
       if (!response.ok) {
         throw Error("Failed to remove product");
       }
 
-      alert("Removed from cart ❌");
+      toast.success("Removed from cart ❌");
 
       setCartList((prev) => prev.filter((item) => item._id !== cartId));
     } catch (error) {
       console.log(error);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -154,7 +166,7 @@ export const CartProvider = ({ children }) => {
 
   //  GET SELECTED ADDRESS
   const selectedAddress = addresses.find(
-    (addr) => addr.id === selectedAddressId
+    (addr) => addr.id === selectedAddressId,
   );
 
   // Add order history to ORDER DB
@@ -187,7 +199,7 @@ export const CartProvider = ({ children }) => {
               pincode: selectedAddress.pincode,
             },
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -204,10 +216,10 @@ export const CartProvider = ({ children }) => {
 
       const data = await response.json();
       console.log("Order history added successfully", data);
-      alert("Order placed successfully ❤️");
+      toast.success("Order placed successfully ❤️");
     } catch (error) {
       console.log(error);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -215,6 +227,8 @@ export const CartProvider = ({ children }) => {
     <cartContext.Provider
       value={{
         cartlist,
+        isLoading,
+        isError,
         cartMap,
         cartItems,
         increaseQty,

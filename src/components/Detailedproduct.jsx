@@ -1,7 +1,7 @@
 import StarRating from "../components/StarRating";
-import { toast } from "react-toastify";
 import { useWishlist } from "./wishlistContext";
 import useProductDetails from "../customHooks/useProductDetails";
+import { useCartContext } from "./cartContext";
 
 const ProductDetails = () => {
   const {
@@ -22,7 +22,8 @@ const ProductDetails = () => {
   } = useProductDetails();
 
   console.log("found product -- ", findProduct);
-  
+
+  const { addToCart } = useCartContext();
 
   if (loading) return <p>Loading the product...</p>;
   if (error) return <p>Error loading product.</p>;
@@ -69,43 +70,43 @@ const ProductDetails = () => {
   //   }
   // };
 
-  // for cart management ----------------------------------------------------
-  const addToCart = async (productId) => {
-    if (!selectedColor || !selectedRam || !selectedStorage) {
-      toast.dark("Please select color, RAM and storage");
-      return;
-    }
-    setCartItems((prev) => [...prev, findProduct]);
+  // // for cart management ----------------------------------------------------
+  // const addToCart = async (productId) => {
+  //   if (!selectedColor || !selectedRam || !selectedStorage) {
+  //     toast.dark("Please select color, RAM and storage");
+  //     return;
+  //   }
+  //   setCartItems((prev) => [...prev, findProduct]);
 
-    try {
-      const response = await fetch("https://cartmodel.vercel.app/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId,
-          variant: {
-            color: selectedColor,
-            storage: selectedStorage,
-            ram: selectedRam,
-            quantity: 1,
-          },
-        }),
-      });
+  //   try {
+  //     const response = await fetch("https://cartmodel.vercel.app/cart", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         productId,
+  //         variant: {
+  //           color: selectedColor,
+  //           storage: selectedStorage,
+  //           ram: selectedRam,
+  //           quantity: 1,
+  //         },
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw "Failed to add to cart";
-      }
+  //     if (!response.ok) {
+  //       throw "Failed to add to cart";
+  //     }
 
-      const data = await response.json();
-      console.log("Product added to cart", data);
-      toast.success("Added to cart ❤️");
-    } catch (error) {
-      console.log(error);
-      toast.error("Oops ! Something went wrong");
-    }
-  };
+  //     const data = await response.json();
+  //     console.log("Product added to cart", data);
+  //     toast.success("Added to cart ❤️");
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Oops ! Something went wrong");
+  //   }
+  // };
 
   return (
     <>
@@ -123,6 +124,9 @@ const ProductDetails = () => {
                 onClick={() =>
                   addToWishlist({
                     productId: findProduct._id,
+                    title: findProduct.smallHeader,
+                    image: findProduct.imageUrl,
+                    price: findProduct.discountedPrice,
                     variant: {
                       color: selectedColor,
                       ram: selectedRam,
@@ -135,7 +139,16 @@ const ProductDetails = () => {
               </button>
               <button
                 className="btn btn-outline-primary w-100"
-                onClick={() => addToCart(findProduct._id)}
+                onClick={() =>
+                  addToCart({
+                    productId: findProduct._id,
+                    variant: {
+                      color: selectedColor,
+                      ram: selectedRam,
+                      storage: selectedStorage,
+                    },
+                  })
+                }
               >
                 Add to cart
               </button>

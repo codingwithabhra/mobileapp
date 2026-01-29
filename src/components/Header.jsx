@@ -1,22 +1,24 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useCartContext } from "./cartContext";
-import useFetch from "./useFetch";
 import { toast } from "react-toastify";
 import "./slide-navbar.css";
+import { useWishlist } from "./wishlistContext";
 
 const Header = () => {
+
+  const { wishlist } = useWishlist();
+
   const { user, cartlist } = useCartContext();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: wishlistData, loading: wlLoaing } = useFetch(
-    "https://smartphone-wishlist-db.vercel.app/wishlist",
-  );
-  console.log("items from wishlist - ", wishlistData);
+  // const { data: wishlistData, loading: wlLoaing } = useFetch(
+  //   "https://smartphone-wishlist-db.vercel.app/wishlist",
+  // );
+  // console.log("items from wishlist - ", wishlistData);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -102,12 +104,12 @@ const Header = () => {
                   style={{ color: "#fff" }}
                 ></i>
 
-                {wishlistData?.length > 0 && (
+                {wishlist?.length > 0 && (
                   <span
                     className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                     style={{ fontSize: "0.65rem" }}
                   >
-                    {wishlistData.length}
+                    {wishlist.length}
                   </span>
                 )}
               </Link>

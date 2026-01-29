@@ -132,6 +132,61 @@ export const CartProvider = ({ children }) => {
     0,
   );
 
+  // for cart management ----------------------------------------------------
+  const addToCart = async (productId) => {
+    if (!selectedColor || !selectedRam || !selectedStorage) {
+      toast.dark("Please select color, RAM and storage");
+      return;
+    }
+
+    // UI update
+    const tempCartItem = {
+      _id: Date.now().toString(), // temp id
+      productId,
+      variant: { ...variant, quantity: 1 },
+    };
+
+    setCartList((prev) => [...prev, tempCartItem]);
+
+    try {
+      const response = await fetch("https://cartmodel.vercel.app/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+          variant: {
+            color: selectedColor,
+            storage: selectedStorage,
+            ram: selectedRam,
+            quantity: 1,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw "Failed to add to cart";
+      }
+
+      const data = await response.json();
+
+      // 🔹 Replace temp item with DB item
+      setCartList((prev) =>
+        prev.map((item) => (item._id === tempCartItem._id ? data : item)),
+      );
+      console.log("Product added to cart", data);
+      toast.success("Added to cart ❤️");
+    } catch (error) {
+      console.log(error);
+
+      setCartList((prev) =>
+        prev.filter((item) => item._id !== tempCartItem._id),
+      );
+      toast.error("Oops ! Something went wrong");
+    }
+  };
+
   const removeFromCart = async (cartId) => {
     try {
       const response = await fetch(
@@ -236,6 +291,7 @@ export const CartProvider = ({ children }) => {
         finalCheckOutPrice,
         totalProductCount,
         totalSavings,
+        addToCart,
         removeFromCart,
         addresses,
         selectedAddress,

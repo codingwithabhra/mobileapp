@@ -16,22 +16,24 @@ export const WishlistProvider = ({ children }) => {
   const [selectedStorage, setSelectedStorage] = useState("");
   const [cartItems, setCartItems] = useState([]);
 
-  const { product: findProduct } = useProductDetails();
-  console.log("in context page --", findProduct);
-  
-
   // Fetch once
   useEffect(() => {
     fetch("https://smartphone-wishlist-db.vercel.app/wishlist")
       .then((res) => res.json())
       .then((data) => {
-        setWishlist(data);
+        setWishlist(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setWishlist([]);
         setLoading(false);
       });
   }, []);
 
   // ADD
-  const addToWishlist = async (productId) => {
+  const addToWishlist = async (product) => {
+    const { productId, title, image, price, variant } = product;
+
     if (!selectedColor || !selectedRam || !selectedStorage) {
       toast.dark("Please select color, RAM and storage");
       return;
@@ -45,16 +47,12 @@ export const WishlistProvider = ({ children }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            productId: findProduct._id,
-            title: findProduct.smallHeader,
-            image: findProduct.imageUrl,
-            price: findProduct.discountedPrice,
+            productId,
+            title,
+            image,
+            price,
             quantity: 1,
-            variant: {
-              color: selectedColor,
-              ram: selectedRam,
-              storage: selectedStorage,
-            },
+            variant,
           }),
         },
       );
@@ -65,7 +63,12 @@ export const WishlistProvider = ({ children }) => {
 
       const data = await response.json();
       // instant UI update
-      setWishlist((prev) => [...prev, saved]);
+      setWishlist((prev) => [...prev, data]);
+
+      // RESET VARIANTS HERE
+      setSelectedColor("");
+      setSelectedRam("");
+      setSelectedStorage("");
 
       console.log("Product added successfully", data);
       toast.success("Added to wishlist ❤️");
@@ -91,7 +94,7 @@ export const WishlistProvider = ({ children }) => {
 
       toast.success("Removed from wishlist ❌");
 
-      setWishList((prev) => prev.filter((item) => item._id !== wishlistId));
+      setWishlist((prev) => prev.filter((item) => item._id !== wishlistId));
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");

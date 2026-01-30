@@ -10,11 +10,7 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [Loading, setLoading] = useState(true);
 
-  // state variable for variant selection
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedRam, setSelectedRam] = useState("");
-  const [selectedStorage, setSelectedStorage] = useState("");
-  const [cartItems, setCartItems] = useState([]);
+  // const [cartItems, setCartItems] = useState([]);
 
   // Fetch once
   useEffect(() => {
@@ -31,10 +27,8 @@ export const WishlistProvider = ({ children }) => {
   }, []);
 
   // ADD
-  const addToWishlist = async (product) => {
-    const { productId, title, image, price, variant } = product;
-
-    if (!selectedColor || !selectedRam || !selectedStorage) {
+  const addToWishlist = async ({ productId, title, image, price, variant }) => {
+    if (!variant?.color || !variant?.ram || !variant?.storage) {
       toast.dark("Please select color, RAM and storage");
       return;
     }
@@ -108,12 +102,6 @@ export const WishlistProvider = ({ children }) => {
         Loading,
         addToWishlist,
         removeFromWishlist,
-        selectedColor,
-        selectedRam,
-        selectedStorage,
-        setSelectedColor,
-        setSelectedRam,
-        setSelectedStorage,
       }}
     >
       {children}

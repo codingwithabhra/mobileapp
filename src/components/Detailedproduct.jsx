@@ -2,17 +2,16 @@ import StarRating from "../components/StarRating";
 import { useWishlist } from "./wishlistContext";
 import useProductDetails from "../customHooks/useProductDetails";
 import { useCartContext } from "./cartContext";
+import { useState } from "react";
 
 const ProductDetails = () => {
-  const {
-    addToWishlist,
-    selectedColor,
-    selectedRam,
-    selectedStorage,
-    setSelectedColor,
-    setSelectedRam,
-    setSelectedStorage,
-  } = useWishlist();
+
+  // state variable for variant selection
+    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedRam, setSelectedRam] = useState("");
+    const [selectedStorage, setSelectedStorage] = useState("");
+
+  const { addToWishlist } = useWishlist();
 
   const {
     product: findProduct,

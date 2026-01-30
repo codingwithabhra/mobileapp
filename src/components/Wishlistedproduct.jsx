@@ -10,24 +10,15 @@ const Wishlist = () => {
     "https://smartphone-app.vercel.app/products",
   );
 
-  if (Loading) return <p>Loading wishlist...</p>;
-  if (pLoading && wishlist.length > 0) return <p>Loading wishlist items...</p>;
+  if (pLoading ||  Loading) return <p>Loading wishlist...</p>;
 
-  const wishlistProducts = pLoading
-    ? []
-    : wishlist
-        .map((item) => {
-          const product = products.find((p) => p._id === item.productId);
-
-          if (!product || !item.variant) return null;
-
-          return {
-            ...product,
-            wishlistId: item._id,
-            variant: item.variant,
-          };
-        })
-        .filter(Boolean);
+const wishlistProducts = wishlist
+  .map((item) => {
+    const product = products.find((p) => p._id === item.productId);
+    if (!product || !item.variant) return null;
+    return { ...product, wishlistId: item._id, variant: item.variant };
+  })
+  .filter(Boolean);
 
   console.log("wishlist products - ", wishlistProducts);
 

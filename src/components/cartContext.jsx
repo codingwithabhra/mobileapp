@@ -132,9 +132,9 @@ export const CartProvider = ({ children }) => {
     0,
   );
 
-  // for cart management ----------------------------------------------------
-  const addToCart = async (productId) => {
-    if (!selectedColor || !selectedRam || !selectedStorage) {
+  // for adding to cart ----------------------------------------------------
+  const addToCart = async ({ productId, variant }) => {
+    if (!variant?.color || !variant?.ram || !variant?.storage) {
       toast.dark("Please select color, RAM and storage");
       return;
     }

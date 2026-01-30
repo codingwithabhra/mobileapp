@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCartContext } from "./cartContext";
 import { toast } from "react-toastify";
@@ -7,6 +7,8 @@ import { useWishlist } from "./wishlistContext";
 
 const Header = () => {
 
+  const navigate = useNavigate();
+
   const { wishlist } = useWishlist();
 
   const { user, cartlist } = useCartContext();
@@ -14,11 +16,6 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-
-  // const { data: wishlistData, loading: wlLoaing } = useFetch(
-  //   "https://smartphone-wishlist-db.vercel.app/wishlist",
-  // );
-  // console.log("items from wishlist - ", wishlistData);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -40,8 +37,8 @@ const Header = () => {
         return;
       }
 
-      // redirect without useNavigate
-      window.location.href = `/products/productdetails/${matchedProduct._id}`;
+      // redirecting without useNavigate
+      navigate(`/products/productdetails/${matchedProduct._id}`);
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong while searching");

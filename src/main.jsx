@@ -14,6 +14,7 @@ import { CartProvider } from "./components/cartContext.jsx";
 import { WishlistProvider } from "./components/wishlistContext.jsx";
 import Profile from "./pages/Profile.jsx";
 import { ToastContainer } from "react-toastify";
+import { FilterProvider } from "./components/filterContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -50,19 +51,21 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <WishlistProvider>
       <CartProvider>
-        <RouterProvider router={router} />
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
+        <FilterProvider>
+          <RouterProvider router={router} />
+          <ToastContainer
+            position="top-center"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
+        </FilterProvider>
       </CartProvider>
     </WishlistProvider>
   </StrictMode>,

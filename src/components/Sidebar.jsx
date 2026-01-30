@@ -110,7 +110,7 @@ const Sidebar = () => {
           Above 60,000 <br />
         </div>
 
-        <button className="btn btn-danger" onChange={clearFilter}>
+        <button className="btn btn-danger" onClick={clearFilter}>
           Clear Filters
         </button>
       </div>

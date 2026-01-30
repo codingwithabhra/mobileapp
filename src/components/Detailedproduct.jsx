@@ -5,11 +5,10 @@ import { useCartContext } from "./cartContext";
 import { useState } from "react";
 
 const ProductDetails = () => {
-
   // state variable for variant selection
-    const [selectedColor, setSelectedColor] = useState("");
-    const [selectedRam, setSelectedRam] = useState("");
-    const [selectedStorage, setSelectedStorage] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedRam, setSelectedRam] = useState("");
+  const [selectedStorage, setSelectedStorage] = useState("");
 
   const { addToWishlist } = useWishlist();
 
@@ -27,47 +26,11 @@ const ProductDetails = () => {
   if (loading) return <p>Loading the product...</p>;
   if (error) return <p>Error loading product.</p>;
 
-  // for wishlist management ----------------------------------------------------
-  // const addToWishlist = async (productId) => {
-  //   if (!selectedColor || !selectedRam || !selectedStorage) {
-  //     toast.dark("Please select color, RAM and storage");
-  //     return;
-  //   }
-  //   try {
-  //     const response = await fetch(
-  //       "https://smartphone-wishlist-db.vercel.app/wishlist",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           productId: findProduct._id,
-  //           title: findProduct.smallHeader,
-  //           image: findProduct.imageUrl,
-  //           price: findProduct.discountedPrice,
-  //           quantity: 1,
-  //           variant: {
-  //             color: selectedColor,
-  //             ram: selectedRam,
-  //             storage: selectedStorage,
-  //           },
-  //         }),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw "Failed to add product";
-  //     }
-
-  //     const data = await response.json();
-  //     console.log("Product added successfully", data);
-  //     toast.success("Added to wishlist ❤️");
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Something went wrong");
-  //   }
-  // };
+  const resetVariants = () => {
+    setSelectedColor("");
+    setSelectedRam("");
+    setSelectedStorage("");
+  };
 
   // // for cart management ----------------------------------------------------
   // const addToCart = async (productId) => {
@@ -120,7 +83,7 @@ const ProductDetails = () => {
             <div className="d-flex flex-column gap-2 mt-3">
               <button
                 className="btn btn-primary w-100"
-                onClick={() =>
+                onClick={() => {
                   addToWishlist({
                     productId: findProduct._id,
                     title: findProduct.smallHeader,
@@ -131,14 +94,15 @@ const ProductDetails = () => {
                       ram: selectedRam,
                       storage: selectedStorage,
                     },
-                  })
-                }
+                  });
+                  resetVariants();
+                }}
               >
                 Add to wishlist
               </button>
               <button
                 className="btn btn-outline-primary w-100"
-                onClick={() =>
+                onClick={() => {
                   addToCart({
                     productId: findProduct._id,
                     variant: {
@@ -146,8 +110,9 @@ const ProductDetails = () => {
                       ram: selectedRam,
                       storage: selectedStorage,
                     },
-                  })
-                }
+                  });
+                  resetVariants();
+                }}
               >
                 Add to cart
               </button>

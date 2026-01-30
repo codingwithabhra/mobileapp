@@ -1,5 +1,4 @@
 import useFetch from "../components/useFetch";
-import { useState } from "react";
 import { useEffect } from "react";
 import { useWishlist } from "./wishlistContext";
 

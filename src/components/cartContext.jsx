@@ -139,15 +139,6 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    // UI update
-    const tempCartItem = {
-      _id: Date.now().toString(), // temp id
-      productId,
-      variant: { ...variant, quantity: 1 },
-    };
-
-    setCartList((prev) => [...prev, tempCartItem]);
-
     try {
       const response = await fetch("https://cartmodel.vercel.app/cart", {
         method: "POST",
@@ -157,9 +148,9 @@ export const CartProvider = ({ children }) => {
         body: JSON.stringify({
           productId,
           variant: {
-            color: selectedColor,
-            storage: selectedStorage,
-            ram: selectedRam,
+            color: variant.color,
+            storage: variant.storage,
+            ram: variant.ram,
             quantity: 1,
           },
         }),
@@ -169,12 +160,15 @@ export const CartProvider = ({ children }) => {
         throw "Failed to add to cart";
       }
 
+      // Fetch updated wishlist after adding
+      const fetchResponse = await fetch(
+        "https://cartmodel.vercel.app/cart",
+      );
+      const updatecart = await fetchResponse.json();
+      setCartList(Array.isArray(updatecart) ? updatecart : []);
+
       const data = await response.json();
 
-      // 🔹 Replace temp item with DB item
-      setCartList((prev) =>
-        prev.map((item) => (item._id === tempCartItem._id ? data : item)),
-      );
       console.log("Product added to cart", data);
       toast.success("Added to cart ❤️");
     } catch (error) {

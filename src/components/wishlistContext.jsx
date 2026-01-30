@@ -10,8 +10,6 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [Loading, setLoading] = useState(true);
 
-  // const [cartItems, setCartItems] = useState([]);
-
   // Fetch once
   useEffect(() => {
     fetch("https://smartphone-wishlist-db.vercel.app/wishlist")
@@ -55,16 +53,12 @@ export const WishlistProvider = ({ children }) => {
         throw "Failed to add product";
       }
 
-      const data = await response.json();
-      // instant UI update
-      setWishlist((prev) => [...prev, data]);
+      // Fetch updated wishlist after adding
+      const fetchResponse = await fetch("https://smartphone-wishlist-db.vercel.app/wishlist");
+      const updatedWishlist = await fetchResponse.json();
+      setWishlist(Array.isArray(updatedWishlist) ? updatedWishlist : []);
 
-      // RESET VARIANTS HERE
-      setSelectedColor("");
-      setSelectedRam("");
-      setSelectedStorage("");
-
-      console.log("Product added successfully", data);
+      console.log("Product added successfully");
       toast.success("Added to wishlist ❤️");
     } catch (error) {
       console.log(error);
@@ -100,6 +94,8 @@ export const WishlistProvider = ({ children }) => {
       value={{
         wishlist,
         Loading,
+        setWishlist,
+        setLoading,
         addToWishlist,
         removeFromWishlist,
       }}

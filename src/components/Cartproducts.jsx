@@ -13,6 +13,7 @@ const Cart = () => {
     isError,
     cartMap,
     cartItems,
+    moveToWishlist,
     increaseQty,
     decreaseQty,
     finalCheckOutPrice,
@@ -125,12 +126,34 @@ const Cart = () => {
                                   product.variant.quantity}
                               </p>
                             </div>
-                            <button
-                              onClick={() => removeFromCart(cartId)}
-                              className="btn btn-outline-danger btn-sm mt-2"
-                            >
-                              Remove
-                            </button>
+                            <div className="d-flex gap-3 mt-3">
+                              <button
+                                onClick={() => removeFromCart(product.cartId)}
+                                className="btn btn-outline-danger btn-sm"
+                              >
+                                Remove
+                              </button>
+
+                              <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => {
+                                  moveToWishlist ({
+                                    cartId: product.cartId,
+                                    productId: product._id,
+                                    title: product.smallHeader,
+                                    image: product.imageUrl,
+                                    price: product.discountedPrice,
+                                    variant: {
+                                      color: product.variant.color,
+                                      ram: product.variant.ram,
+                                      storage: product.variant.storage,
+                                    },
+                                  });
+                                }}
+                              >
+                                Move to Wishlist
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -1,12 +1,15 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import useFetch from "./useFetch";
 import { toast } from "react-toastify";
+import { useWishlist } from "./wishlistContext";
 
 const cartContext = createContext();
 export const useCartContext = () => useContext(cartContext);
 
 export const CartProvider = ({ children }) => {
   const [orderPlaced, setOrderPlaced] = useState(false);
+
+  const { addToWishlist, refetchWishlist } = useWishlist();
 
   const {
     data: productData,
@@ -132,10 +135,28 @@ export const CartProvider = ({ children }) => {
     0,
   );
 
+  const isProductAlreadyInCart = (productId, variant) => {
+    return cartlist.some(
+      (item) =>
+        item.productId === productId &&
+        item.variant.color === variant.color &&
+        item.variant.ram === variant.ram &&
+        item.variant.storage === variant.storage,
+    );
+  };
+
   // for adding to cart ----------------------------------------------------
   const addToCart = async ({ productId, variant }) => {
     if (!variant?.color || !variant?.ram || !variant?.storage) {
       toast.dark("Please select color, RAM and storage");
+      return;
+    }
+
+    // DUPLICATION CHECK
+    const alreadyExists = isProductAlreadyInCart(productId, variant);
+
+    if (alreadyExists) {
+      toast.dark("This product is already added in cart");
       return;
     }
 
@@ -160,10 +181,8 @@ export const CartProvider = ({ children }) => {
         throw "Failed to add to cart";
       }
 
-      // Fetch updated wishlist after adding
-      const fetchResponse = await fetch(
-        "https://cartmodel.vercel.app/cart",
-      );
+      // Fetch updated cartlist after adding
+      const fetchResponse = await fetch("https://cartmodel.vercel.app/cart");
       const updatecart = await fetchResponse.json();
       setCartList(Array.isArray(updatecart) ? updatecart : []);
 
@@ -201,6 +220,20 @@ export const CartProvider = ({ children }) => {
       console.log(error);
       toast.error("Something went wrong");
     }
+  };
+
+  // MOVING ITEM FROM CART TO WISHLIST
+  const moveToWishlist = async ({
+    cartId,
+    productId,
+    title,
+    image,
+    price,
+    variant,
+  }) => {
+    await addToWishlist({ productId, title, image, price, variant });
+    refetchWishlist();
+    removeFromCart(cartId)
   };
 
   //  ADD NEW ADDRESS
@@ -287,6 +320,7 @@ export const CartProvider = ({ children }) => {
         totalSavings,
         addToCart,
         removeFromCart,
+        moveToWishlist,
         addresses,
         selectedAddress,
         selectedAddressId,

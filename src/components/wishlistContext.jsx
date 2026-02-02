@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useProductDetails from "../customHooks/useProductDetails";
 
 const WishlistContext = createContext();
 
@@ -24,12 +23,46 @@ export const WishlistProvider = ({ children }) => {
       });
   }, []);
 
+  console.log("wish list from context -- ", wishlist);
+  
+    // 🔁 REFETCH FUNCTION (single source of truth)
+  const refetchWishlist = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        "https://smartphone-wishlist-db.vercel.app/wishlist"
+      );
+      const data = await res.json();
+      setWishlist(Array.isArray(data) ? data : []);
+    } catch (error) {
+      setWishlist([]);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // ADD
   const addToWishlist = async ({ productId, title, image, price, variant }) => {
     if (!variant?.color || !variant?.ram || !variant?.storage) {
       toast.dark("Please select color, RAM and storage");
       return;
     }
+
+    // DUPLICATION CHECK
+    const alreadyExists = wishlist.some(
+      (item) =>
+        item.productId === productId &&
+        item.variant?.color === variant.color &&
+        item.variant?.ram === variant.ram &&
+        item.variant?.storage === variant.storage,
+    );
+
+    if (alreadyExists) {
+      toast.dark("This product is already added in wishlist");
+      return;
+    }
+
     try {
       const response = await fetch(
         "https://smartphone-wishlist-db.vercel.app/wishlist",
@@ -54,7 +87,9 @@ export const WishlistProvider = ({ children }) => {
       }
 
       // Fetch updated wishlist after adding
-      const fetchResponse = await fetch("https://smartphone-wishlist-db.vercel.app/wishlist");
+      const fetchResponse = await fetch(
+        "https://smartphone-wishlist-db.vercel.app/wishlist",
+      );
       const updatedWishlist = await fetchResponse.json();
       setWishlist(Array.isArray(updatedWishlist) ? updatedWishlist : []);
 
@@ -98,6 +133,7 @@ export const WishlistProvider = ({ children }) => {
         setLoading,
         addToWishlist,
         removeFromWishlist,
+        refetchWishlist,
       }}
     >
       {children}

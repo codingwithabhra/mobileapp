@@ -142,6 +142,31 @@ const Profile = () => {
                 </div>
               ))}
 
+              {/* ORDER INFO */}
+              <div className="mb-3">
+                <p className="mb-1">
+                  <strong>Order ID:</strong> {order._id}
+                </p>
+
+                <p className="mb-1">
+                  <strong>Order Date:</strong>{" "}
+                  {new Date(order.orderDate).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+
+                <p className="mb-0">
+                  <strong>Shipping Address:</strong>
+                  <br />
+                  {order.selectedAddress.name} <br />
+                  {order.selectedAddress.addressLine} || 
+                  Pincode: {order.selectedAddress.pincode} ||
+                  Phone: {order.selectedAddress.phone}
+                </p>
+              </div>
+
               <hr />
 
               {/* TOTAL */}

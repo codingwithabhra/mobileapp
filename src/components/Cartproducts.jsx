@@ -1,8 +1,3 @@
-import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import useFetch from "../components/useFetch";
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCartContext } from "../components/cartContext";
 

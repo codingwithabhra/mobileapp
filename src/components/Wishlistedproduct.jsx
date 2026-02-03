@@ -1,23 +1,24 @@
 import useFetch from "../components/useFetch";
-import { useEffect } from "react";
 import { useWishlist } from "./wishlistContext";
+import { useCartContext } from "./cartContext";
 
 const Wishlist = () => {
   const { wishlist, Loading, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCartContext();
 
   const { data: products, loading: pLoading } = useFetch(
     "https://smartphone-app.vercel.app/products",
   );
 
-  if (pLoading ||  Loading) return <p>Loading wishlist...</p>;
+  if (pLoading || Loading) return <p>Loading wishlist...</p>;
 
-const wishlistProducts = wishlist
-  .map((item) => {
-    const product = products.find((p) => p._id === item.productId);
-    if (!product || !item.variant) return null;
-    return { ...product, wishlistId: item._id, variant: item.variant };
-  })
-  .filter(Boolean);
+  const wishlistProducts = wishlist
+    .map((item) => {
+      const product = products.find((p) => p._id === String(item.productId));
+      if (!product || !item.variant) return null;
+      return { ...product, wishlistId: item._id, variant: item.variant };
+    })
+    .filter(Boolean);
 
   console.log("wishlist products - ", wishlistProducts);
 
@@ -59,14 +60,35 @@ const wishlistProducts = wishlist
                   </p>
 
                   <div className="mt-auto d-flex align-items-center justify-content-between">
+                    {/* PRICE */}
                     <h4 className="fw-bold mb-0">₹{product.discountedPrice}</h4>
 
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() => removeFromWishlist(product.wishlistId)}
-                    >
-                      Remove
-                    </button>
+                    {/* ACTION BUTTONS */}
+                    <div className="d-flex gap-2">
+                      <button
+                        className="btn btn-outline-danger btn-sm px-3"
+                        onClick={() => removeFromWishlist(product.wishlistId)}
+                      >
+                        Remove
+                      </button>
+
+                      <button
+                        className="btn btn-primary btn-sm px-3"
+                        onClick={() => {
+                          addToCart({
+                            productId: product._id,
+                            variant: {
+                              color: product.variant.color,
+                              ram: product.variant.ram,
+                              storage: product.variant.storage,
+                            },
+                          });
+                          removeFromWishlist(product.wishlistId);
+                        }}
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

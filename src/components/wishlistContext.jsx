@@ -25,7 +25,7 @@ export const WishlistProvider = ({ children }) => {
 
   console.log("wish list from context -- ", wishlist);
   
-    // 🔁 REFETCH FUNCTION (single source of truth)
+    // REFETCH FUNCTION
   const refetchWishlist = async () => {
     try {
       setLoading(true);

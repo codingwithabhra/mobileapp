@@ -1,5 +1,6 @@
 import { useCartContext } from "../components/cartContext";
-import {  useEffect } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Checkout = () => {
   const {
@@ -47,13 +48,13 @@ const Checkout = () => {
     }
   }, [orderPlaced]);
 
-  // const [showForm, setShowForm] = useState(false);
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   phone: "",
-  //   address: "",
-  //   pincode: "",
-  // });
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    pincode: "",
+  });
 
   if (cartlist.length === 0) return <h3>Your cart is empty ❤️</h3>;
 
@@ -108,6 +109,64 @@ const Checkout = () => {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              className="btn btn-outline-primary mt-3"
+              onClick={() => setShowForm(!showForm)}
+            >
+              + Add New Address
+            </button>
+
+            {showForm && (
+              <div className="card p-3 mt-3">
+                <input
+                  placeholder="Name"
+                  className="form-control mb-2"
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+                <input
+                  placeholder="Phone"
+                  className="form-control mb-2"
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                />
+                <input
+                  placeholder="Address"
+                  className="form-control mb-2"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      address: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  placeholder="Pincode"
+                  className="form-control mb-2"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      pincode: e.target.value,
+                    })
+                  }
+                />
+
+                <button
+                  className="btn btn-success"
+                  onClick={() => {
+                    addAddress(formData);
+                    setShowForm(false);
+                  }}
+                >
+                  Save Address
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="d-flex justify-content-center mt-4">

@@ -27,6 +27,10 @@ export const CartProvider = ({ children }) => {
 
   const [cartlist, setCartList] = useState([]);
 
+  const { data: addressData, loading: addressLoading } = useFetch(
+    "https://address-model-y8z6.vercel.app/address",
+  );
+
   // ---------------- USER STATE (SINGLE USER FOR LOGIN)
   const [user, setUser] = useState({
     name: "Abhra Patra",
@@ -38,17 +42,18 @@ export const CartProvider = ({ children }) => {
   });
 
   // ---------------- ADDRESS STATE (NEW)
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      name: "Abhra Patra",
-      phone: "6541230893",
-      address: "Kolkata, India",
-      pincode: "700001",
-    },
-  ]);
+  const [addresses, setAddresses] = useState([]);
 
   const [selectedAddressId, setSelectedAddressId] = useState(1);
+
+  useEffect(() => {
+    if (Array.isArray(addressData)) {
+      setAddresses(addressData);
+      if (addressData.length && !selectedAddressId) {
+        setSelectedAddressId(addressData[0].id);
+      }
+    }
+  }, [addressData]);
 
   useEffect(() => {
     if (Array.isArray(cartData)) {
@@ -57,6 +62,16 @@ export const CartProvider = ({ children }) => {
       setCartList([]);
     }
   }, [cartData]);
+
+  // // SELECT ADDRESS
+  // const selectAddress = (id) => {
+  //   setSelectedAddressId(id);
+  // };
+
+  // // GET SELECTED ADDRESS
+  // const selectedAddress = addresses.find(
+  //   (addr) => addr.id === selectedAddressId,
+  // );
 
   // guard logic instead of JSX
   const isLoading = productLoading || cartLoading;
@@ -233,23 +248,99 @@ export const CartProvider = ({ children }) => {
   }) => {
     await addToWishlist({ productId, title, image, price, variant });
     refetchWishlist();
-    removeFromCart(cartId)
+    removeFromCart(cartId);
   };
 
   //  ADD NEW ADDRESS
-  const addAddress = (newAddress) => {
-    setAddresses((prev) => [...prev, { ...newAddress, id: Date.now() }]);
+  const addAddress = async (newAddress) => {
+    console.log("from cart context, New address -- ", newAddress);
+
+    try {
+      const response = await fetch(
+        "https://address-model-y8z6.vercel.app/address",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newAddress),
+        },
+      );
+
+      if (!response.ok) throw "Failed to add address";
+
+      // Fetch updated address after adding
+      const fetchResponse = await fetch(
+        "https://address-model-y8z6.vercel.app/address",
+      );
+      const updateaddress = await fetchResponse.json();
+      setAddresses(Array.isArray(updateaddress) ? updateaddress : []);
+
+      const data = await response.json();
+      console.log("from cart context, data --", data);
+
+      // setAddresses((prev) => [...prev, data]);
+      toast.success("Address added successfully");
+    } catch (error) {
+      toast.error("Failed to add address");
+    }
   };
 
-  //  SELECT ADDRESS
-  const selectAddress = (id) => {
-    setSelectedAddressId(id);
+  // UPDATE ADDRESS (DB + UI)
+  const editAddress = async (id, updatedAddress) => {
+    try {
+      const response = await fetch(
+        `https://address-model-y8z6.vercel.app/address/${id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedAddress),
+        },
+      );
+
+      if (!response.ok) throw "Update failed";
+
+      const updated = await response.json();
+
+      console.log("updated response after edit -- ", updated);
+      
+      setAddresses((prev) =>
+        prev.map((addr) => (addr._id === id ? updated : addr)),
+      );
+
+      toast.success("Address updated");
+    } catch (error) {
+      toast.error("Failed to update address");
+    }
   };
 
-  //  GET SELECTED ADDRESS
-  const selectedAddress = addresses.find(
-    (addr) => addr.id === selectedAddressId,
-  );
+  // DELETE ADDRESS (DB + UI)
+  const removeAddress = async (id) => {
+    try {
+      const response = await fetch(
+        `https://address-model-y8z6.vercel.app/address/${id}`,
+        { method: "DELETE" },
+      );
+
+      if (!response.ok) throw "Delete failed";
+
+      setAddresses((prev) => prev.filter((addr) => addr._id !== id));
+
+      toast.success("Address deleted");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete address");
+    }
+  };
+
+  // useEffect(() => {
+  //   if (selectedAddress) {
+  //     setUser((prev) => ({
+  //       ...prev,
+  //       phone: selectedAddress.phone,
+  //       address: selectedAddress.address,
+  //       pincode: selectedAddress.pincode,
+  //     }));
+  //   }
+  // }, [selectedAddress]);
 
   // Add order history to ORDER DB
   const placeOrder = async (cartId) => {
@@ -322,10 +413,9 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         moveToWishlist,
         addresses,
-        selectedAddress,
-        selectedAddressId,
         addAddress,
-        selectAddress,
+        editAddress,
+        removeAddress,
         placeOrder,
         orderPlaced,
         setOrderPlaced,

@@ -1,29 +1,25 @@
 import { useCartContext } from "../components/cartContext";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const {
     cartlist,
     isLoading,
     isError,
-    cartMap,
     cartItems,
-    increaseQty,
-    decreaseQty,
     finalCheckOutPrice,
-    totalProductCount,
-    totalSavings,
-    removeFromCart,
     addresses,
-    selectedAddress,
-    selectedAddressId,
-    addAddress,
     selectAddress,
+    selectedAddress,
+    addAddress,
     placeOrder,
     orderPlaced,
     setOrderPlaced,
   } = useCartContext();
+
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -41,7 +37,7 @@ const Checkout = () => {
     if (orderPlaced) {
       const timer = setTimeout(() => {
         setOrderPlaced(false);
-        window.location.replace("/");
+        navigate("/profile");
       }, 2500);
 
       return () => clearTimeout(timer);
@@ -83,32 +79,41 @@ const Checkout = () => {
 
           {/* Delivery summary */}
           <h2>Delivery Summary</h2>
+
+          {addresses.length === 0 && (
+            <p className="text-muted mt-2">
+              No saved addresses. Please add one to continue.
+            </p>
+          )}
+
           <div className="pt-3">
-            <div className="pt-3">
-              {addresses.map((addr) => (
-                <div
-                  key={addr.id}
-                  className={`card p-3 mb-2 ${
-                    selectedAddress?.id === addr.id ? "border-primary" : ""
-                  }`}
-                >
-                  <label className="d-flex gap-3 align-items-start">
-                    <input
-                      type="radio"
-                      checked={selectedAddress?.id === addr.id}
-                      onChange={() => selectAddress(addr.id)}
-                    />
-                    <div>
-                      <p className="fw-bold">{addr.name}</p>
-                      <p>Address - {addr.address}</p>
-                      <p>
-                        Mob - {addr.phone} / Pin - {addr.pincode}
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              ))}
-            </div>
+            {addresses.map((addr, index) => (
+              <div
+                key={addr.id}
+                className={`card p-3 mb-2 ${
+                  selectedAddress?.id === addr.id ? "border-primary" : ""
+                }`}
+              >
+                <label className="d-flex gap-3 align-items-start">
+                  <input
+                    type="radio"
+                    name="deliveryAddress"
+                    checked={selectedAddress?.id === addr.id}
+                    onChange={() => selectAddress(addr.id)}
+                  />
+
+                  <div>
+                    <p className="fw-bold mb-1">
+                      Address {index + 1} — {addr.name}
+                    </p>
+                    <p className="mb-1">{addr.address}</p>
+                    <p className="mb-0">
+                      📞 {addr.phone} | 📍 {addr.pincode}
+                    </p>
+                  </div>
+                </label>
+              </div>
+            ))}
           </div>
 
           <div className="pt-2">
@@ -160,6 +165,12 @@ const Checkout = () => {
                   className="btn btn-success"
                   onClick={() => {
                     addAddress(formData);
+                    setFormData({
+                      name: "",
+                      phone: "",
+                      address: "",
+                      pincode: "",
+                    });
                     setShowForm(false);
                   }}
                 >
@@ -170,7 +181,10 @@ const Checkout = () => {
           </div>
 
           <div className="d-flex justify-content-center mt-4">
-            <button className="btn btn-warning px-5 py-2" onClick={placeOrder}>
+            <button
+              className="btn btn-warning px-5 py-2"
+              onClick={() => placeOrder()}
+            >
               Confirm Order
             </button>
           </div>

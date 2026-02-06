@@ -21,6 +21,14 @@ const Checkout = () => {
 
   const navigate = useNavigate();
 
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    pincode: "",
+  });
+
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center mt-5">
@@ -38,19 +46,11 @@ const Checkout = () => {
       const timer = setTimeout(() => {
         setOrderPlaced(false);
         navigate("/profile");
-      }, 2500);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
-  }, [orderPlaced]);
-
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    pincode: "",
-  });
+  }, [orderPlaced, navigate, setOrderPlaced]);
 
   if (cartlist.length === 0) return <h3>Your cart is empty ❤️</h3>;
 
@@ -183,7 +183,8 @@ const Checkout = () => {
           <div className="d-flex justify-content-center mt-4">
             <button
               className="btn btn-warning px-5 py-2"
-              onClick={() => placeOrder()}
+              disabled={!selectedAddress}
+              onClick={placeOrder}
             >
               Confirm Order
             </button>

@@ -60,10 +60,9 @@ const Profile = () => {
                 <button
                   className="btn btn-sm btn-outline-secondary"
                   onClick={() => {
-                    setEditId(addr.id);
+                    setEditId(addr._id);
                     setFormData(addr);
                     setShowForm(true);
-                    editAddress(addr)
                   }}
                 >
                   Edit

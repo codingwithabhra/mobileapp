@@ -80,8 +80,8 @@ const Header = () => {
             {/* LOGIN/CART */}
             <div className="rightPart ms-lg-auto d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3">
               <Link
-                className="btn d-flex align-items-center gap-2"
-                style={{ color: "#fff" }}
+                className="btn d-flex align-items-center"
+                style={{ color: "#fff", padding: "0" }}
                 to="/profile"
               >
                 <img
@@ -91,7 +91,7 @@ const Header = () => {
                   width="32"
                   height="32"
                 />
-                <span className="d-none d-lg-inline">{user.name}</span>
+                <span className="d-none d-lg-inline p-2">{user.name}</span>
               </Link>
 
               {/* WISHLIST */}

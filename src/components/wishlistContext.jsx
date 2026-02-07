@@ -86,6 +86,8 @@ export const WishlistProvider = ({ children }) => {
         throw "Failed to add product";
       }
 
+      toast.success("Added to wishlist ❤️");
+
       // Fetch updated wishlist after adding
       const fetchResponse = await fetch(
         "https://smartphone-wishlist-db.vercel.app/wishlist",
@@ -94,7 +96,7 @@ export const WishlistProvider = ({ children }) => {
       setWishlist(Array.isArray(updatedWishlist) ? updatedWishlist : []);
 
       console.log("Product added successfully");
-      toast.success("Added to wishlist ❤️");
+      // toast.success("Added to wishlist ❤️");
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");

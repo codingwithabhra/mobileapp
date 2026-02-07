@@ -187,6 +187,8 @@ export const CartProvider = ({ children }) => {
         throw "Failed to add to cart";
       }
 
+      toast.success("Added to cart ❤️");
+
       // Fetch updated cartlist after adding
       const fetchResponse = await fetch("https://cartmodel.vercel.app/cart");
       const updatecart = await fetchResponse.json();
@@ -195,14 +197,16 @@ export const CartProvider = ({ children }) => {
       const data = await response.json();
 
       console.log("Product added to cart", data);
-      toast.success("Added to cart ❤️");
+      // toast.success("Added to cart ❤️");
     } catch (error) {
       console.log(error);
+
+      toast.error("Oops ! Something went wrong");
 
       setCartList((prev) =>
         prev.filter((item) => item._id !== tempCartItem._id),
       );
-      toast.error("Oops ! Something went wrong");
+      
     }
   };
 
@@ -258,6 +262,8 @@ export const CartProvider = ({ children }) => {
 
       if (!response.ok) throw "Failed to add address";
 
+      toast.success("Address added successfully");
+
       // Fetch updated address after adding
       const fetchResponse = await fetch(
         "https://address-model-y8z6.vercel.app/address",
@@ -269,7 +275,7 @@ export const CartProvider = ({ children }) => {
       console.log("from cart context, data --", data);
 
       // setAddresses((prev) => [...prev, data]);
-      toast.success("Address added successfully");
+      // toast.success("Address added successfully");
     } catch (error) {
       toast.error("Failed to add address");
     }
@@ -289,6 +295,8 @@ export const CartProvider = ({ children }) => {
 
       if (!response.ok) throw "Update failed";
 
+      toast.success("Address updated");
+
       const updated = await response.json();
 
       console.log("updated response after edit -- ", updated);
@@ -300,7 +308,7 @@ export const CartProvider = ({ children }) => {
       const updateaddress = await fetchResponse.json();
       setAddresses(Array.isArray(updateaddress) ? updateaddress : []);
 
-      toast.success("Address updated");
+      // toast.success("Address updated");
     } catch (error) {
       toast.error("Failed to update address");
     }
@@ -316,9 +324,11 @@ export const CartProvider = ({ children }) => {
 
       if (!response.ok) throw "Delete failed";
 
+      toast.success("Address deleted");
+
       setAddresses((prev) => prev.filter((addr) => addr._id !== id));
 
-      toast.success("Address deleted");
+      // toast.success("Address deleted");
     } catch (error) {
       console.log(error);
       toast.error("Failed to delete address");
@@ -332,17 +342,6 @@ export const CartProvider = ({ children }) => {
   const selectedAddress = addresses.find(
     (addr) => addr._id === selectedAddressId,
   );
-
-  // useEffect(() => {
-  //   if (selectedAddress) {
-  //     setUser((prev) => ({
-  //       ...prev,
-  //       phone: selectedAddress.phone,
-  //       address: selectedAddress.address,
-  //       pincode: selectedAddress.pincode,
-  //     }));
-  //   }
-  // }, [selectedAddress]);
 
   // Add order history to ORDER DB
   const placeOrder = async () => {
@@ -386,6 +385,8 @@ export const CartProvider = ({ children }) => {
         throw "Order failed";
       }
 
+      toast.success("Order placed successfully ❤️");
+
       // Clear cart from DB (delete all items)
       await Promise.all(
         cartlist.map((item) =>
@@ -398,7 +399,7 @@ export const CartProvider = ({ children }) => {
       // Clear frontend cart
       setCartList([]);
 
-      toast.success("Order placed successfully ❤️");
+      // toast.success("Order placed successfully ❤️");
 
       setOrderPlaced(true);
     } catch (error) {
